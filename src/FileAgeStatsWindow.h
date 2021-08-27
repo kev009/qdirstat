@@ -179,12 +179,10 @@ namespace QDirStat
     enum YearListColumns
     {
 	YearListYearCol,
-	YearListFilesCountCol,
-	YearListFilesPercentBarCol,
-	YearListFilesPercentCol,
-	YearListSizeCol,
 	YearListSizePercentBarCol,
 	YearListSizePercentCol,
+	YearListSizeCol,
+	YearListFilesCol,
 	YearListColumnCount
     };
 
