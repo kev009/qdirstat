@@ -21,10 +21,10 @@
 #include "DebugHelpers.h"
 
 // How many times the standard deviation from the average is considered dominant
-#define DOMINANCE_FACTOR                        2.0
+#define DOMINANCE_FACTOR                        2.5
 
 // Multiplier for the dominance factor after each iteration
-#define DOMINANCE_MULTIPLIER                    1.0
+#define DOMINANCE_MULTIPLIER                    0.8
 
 // Maximum number of iterations to check for dominance
 #define DOMINANCE_ITERATIONS                    3
@@ -1189,15 +1189,19 @@ void DirInfo::findDominantChildren()
     CHECK_NEW( _dominantChildren );
 
     int   iteration = 0;
+    qreal count     = qMin( _sortedChildren->size(), 10 );
     int   first     = 0;
-    int   last      = _sortedChildren->size() - 1;
-    qreal sum       = totalAllocatedSize() - allocatedSize();
-    qreal count     = last - first + 1;
+    int   last      = count - 1;
     qreal dominanceFactor = DOMINANCE_FACTOR;
 
     while ( count >= 2 && ++iteration <= DOMINANCE_ITERATIONS )
     {
-        qreal average = (qreal) sum / count;
+        qreal sum = 0.0;
+
+        for ( int i=first; i <= last; ++i )
+            sum += _sortedChildren->at( i )->totalAllocatedSize();
+
+        qreal average = sum / count;
 
         // Calculate the standard deviation
 
@@ -1245,7 +1249,6 @@ void DirInfo::findDominantChildren()
             ++newDomCount;
             ++first;
             --count;
-            sum -= size;
         }
 
         dominanceFactor *= DOMINANCE_MULTIPLIER;
